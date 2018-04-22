@@ -8,6 +8,9 @@ let goodsSchema = mongoose.Schema({
     category:{
         type: String
     },
+    img:{
+        type: String
+    },
     price:{
         type: Number
     },
