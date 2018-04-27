@@ -5,13 +5,18 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-
+var csrf = require('csurf');
 var mongoose = require('mongoose');
+var passport = require('passport');
+var flash = require('connect-flash');
+var validator = require('express-validator');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
+var user = require('./routes/user');
 
-mongoose.connect();
+require('./config/passport');
+
+mongoose.connect('');
 let db = mongoose.connection;
 db.once('open', function() {
     console.log('Connected to Mongo db');
@@ -27,9 +32,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(validator());
+
 app.use(cookieParser());
 
 app.use(session({
@@ -38,10 +46,18 @@ app.use(session({
   saveUninitialized: false
 }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(csrf());
+app.use(function(req, res, next) {
+  res.cookie('XSRF-TOKEN', req.csrfToken());
+  return next();
+});
+
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', index);
-app.use('/users', users);
+// app.use('/user', user);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
