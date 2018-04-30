@@ -1,9 +1,41 @@
 var express = require('express');
+var path = require('path');
 var router = express.Router();
+var passport = require('passport');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/profile', isLoggedIn, function(req, res, next) {  
+  res.sendFile(path.join(__dirname, '../', '/public/index.html'));
+});
+
+router.use('/', notLoggedIn, function(req, res, next) {  
+  next();
+});
+
+router.get('/signup', function(req, res, next) {  
+  res.sendFile(path.join(__dirname, '../', '/public/index.html'));
+});
+
+router.get('/signin', function(req, res, next) {  
+  res.sendFile(path.join(__dirname, '../', '/public/index.html'));
+});
+
+router.get('/logout', function(req, res, next) {  
+  req.logout();
+  res.redirect('/')
 });
 
 module.exports = router;
+
+function isLoggedIn(req, res, next) {
+  if(req.isAuthenticated()){
+    return next();
+  }
+  res.redirect('/');
+}
+
+function notLoggedIn(req, res, next) {
+  if(!req.isAuthenticated()){
+    return next();
+  }
+  res.redirect('/');
+}
