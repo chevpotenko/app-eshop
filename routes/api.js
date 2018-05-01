@@ -5,6 +5,7 @@ var router = express.Router();
 var Banners = require('../models/banners');
 var Goods = require('../models/goods');
 var Users = require('../models/users');
+var Cart =require('../models/cart');
 
 router.get('/goods', function(req, res, next) { 
   Goods.find({}, function(err, goods) {
@@ -68,8 +69,25 @@ router.post('/user/signin', (req, res, next) => {
   })(req, res, next);
 });
 
-router.post('/cart/add', (req, res, next) => { 
+router.get('/cart/add/:id', (req, res, next) => { 
   var productId = req.params.id;
+  var cart = new Cart(req.session.cart ? req.session.cart : {});
+  Goods.findById(productId, function(err, goods) {
+    if(err) {
+      return res.json({"error": "empty goods"});
+    }
+    cart.add(goods, goods._id);
+    req.session.cart = cart;    
+    res.json(cart);
+  });
+});
+
+router.get('/shoppingcart', (req, res, next) => { 
+  if(!req.session.cart) {
+    res.json({items: [], totalPrice: 0, totalQty: 0});
+  }
+  var cart = new Cart(req.session.cart);
+  res.json({items: cart.generateArray(), totalPrice: cart.totalPrice, totalQty: cart.totalQty});
 });
 
 module.exports = router;

@@ -15,4 +15,8 @@ router.get('/catalog', function(req, res, next) {
   res.sendfile('./public/index.html');
 });
 
+router.get('/shoppingcart', function(req, res, next) {  
+  res.sendfile('./public/index.html');
+});
+
 module.exports = router;
