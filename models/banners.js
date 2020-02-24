@@ -1,6 +1,6 @@
-let mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-let bannerSchema = mongoose.Schema({
+const bannerSchema = mongoose.Schema({
     url:{
         type: String,
         required: true
