@@ -1,22 +1,11 @@
-var path = require('path');
-var express = require('express');
-var passport = require('passport');
-var router = express.Router();
+const path = require('path');
+const router = require('express').Router();
+const csrf = require('../node_modules/csurf');
 
-var csrf = require('../node_modules/csurf');
-var csrfProtection = csrf();
-router.use(csrfProtection);
+router.use(csrf());
 
-router.get('/', function(req, res, next) { 
-  res.sendfile('./public/index.html');
-});
-
-router.get('/catalog', function(req, res, next) {  
-  res.sendfile('./public/index.html');
-});
-
-router.get('/shoppingcart', function(req, res, next) {  
-  res.sendfile('./public/index.html');
+router.get('*', function (req, res) {
+    res.sendFile(path.resolve( __dirname, '../',  'public', 'index.html'));
 });
 
 module.exports = router;
