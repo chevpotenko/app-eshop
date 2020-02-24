@@ -4,7 +4,7 @@ module.exports = function Carts(oldCart) {
     this.totalPrice = oldCart.totalPrice || 0;
 
     this.add = function(item, id) {
-        var storedItem = this.items[id];
+        let storedItem = this.items[id];
         if(!storedItem) {
             storedItem = this.items[id] = {
                 item: item,
@@ -16,13 +16,13 @@ module.exports = function Carts(oldCart) {
         storedItem.total = storedItem.item.price * storedItem.qty;
         this.totalQty++;
         this.totalPrice += storedItem.item.price;
-    }
+    };
 
     this.generateArray = function() {
-        var arr = [];
-        for (var id in this.items) {
+        let arr = [];
+        for (let id in this.items) {
             arr.push(this.items[id]);
         }
         return arr;
     }
-}
+};
