@@ -12,17 +12,26 @@ const productsSchema = mongoose.Schema({
     category: {
         type: String
     },
-    images: {
-        type: Array
-    },
     price: {
         type: Number
+    },
+    sizes: {
+        type: Array
+    },
+    brand: {
+        type: String
+    },
+    colors: {
+        type: Array
     },
     rating: {
         type: Number
     },
     discount: {
         type: Number
+    },
+    images: {
+        type: Array
     }
 });
 

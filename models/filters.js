@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const catalogsSchema = new mongoose.Schema({
+const filtersSchema = mongoose.Schema({
     id: {
         type: Number,
         required: true
@@ -9,12 +9,14 @@ const catalogsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    parentCategory: {
+    type: {
         type: String,
+        required: true
     },
-    img: {
-        type: String,
+    values: {
+        type: Array,
+        required: true
     }
 });
 
-module.exports = mongoose.model('catalogs', catalogsSchema);
+module.exports = mongoose.model('filters', filtersSchema);
