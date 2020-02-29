@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const bannerSchema = mongoose.Schema({
-    url:{
+    url: {
         type: String,
         required: true
     },
-    img:{
+    img: {
         type: String,
         required: true
     }
