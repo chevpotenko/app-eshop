@@ -1,28 +1,33 @@
-module.exports = function Carts(oldCart) {
-    this.items = oldCart.items || {};
-    this.totalQty = oldCart.totalQty || 0;
-    this.totalPrice = oldCart.totalPrice || 0;
+module.exports = class Carts {
+    constructor(oldCart) {
+        this.items = oldCart.items || {};
+        this.totalQty = oldCart.totalQty || 0;
+        this.totalPrice = oldCart.totalPrice || 0;
+    }
 
-    this.add = function(item, id) {
-        let storedItem = this.items[id];
-        if(!storedItem) {
-            storedItem = this.items[id] = {
-                item: item,
-                qty: 0,
-                total: 0
-            }
+    add(item, id) {
+        if(!this.items[id]) {
+            this.items[id] = this.createCart(item);
         }
-        storedItem.qty++;
-        storedItem.total = storedItem.item.price * storedItem.qty;
-        this.totalQty++;
-        this.totalPrice += storedItem.item.price;
+        this.items[id].qty++;
+        this.items[id].total = this.items[id].item.price * this.items[id].qty;
+        this.updateTotal(this.items[id].item);
     };
 
-    this.generateArray = function() {
-        let arr = [];
-        for (let id in this.items) {
-            arr.push(this.items[id]);
+    createCart(item) {
+        return {
+            item: item,
+            qty: 0,
+            total: 0
         }
-        return arr;
+    }
+
+    updateTotal(item) {
+        this.totalQty++;
+        this.totalPrice += item.price;
+    }
+
+    generateArray() {
+        return this.items.map(item => item);
     }
 };

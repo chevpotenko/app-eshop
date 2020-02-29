@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start_local": "nodemon -r dotenv/config ./bin/www",
-    "start": "node ./bin/www"
+    "develop": "nodemon -r dotenv/config ./bin/www",
+    "debug": "nodemon %NODE_DEBUG_OPTION% -r dotenv/config ./bin/www",
+    "start": "node -r dotenv/config ./bin/www"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
