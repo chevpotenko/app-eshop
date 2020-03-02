@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { addToCart }  = require('../../services/cart');
 
 router.get('/cart', (req, res) => {
     if (!req.session.cart) {
@@ -8,22 +9,6 @@ router.get('/cart', (req, res) => {
     }
 });
 
-router.put('/cart/:id', (req, res) => {
-    let cart = [];
-    let isAdded = false;
-    if(req.session.cart) {
-        isAdded = req.session.cart.find(item => req.body.product.id === item.product.id);
-        cart = req.session.cart
-            .map(item => req.body.product.id === item.product.id
-                ? req.body
-                : item
-            );
-    }
-    if (!isAdded) {
-        cart.push(req.body);
-    }
-    req.session.cart = cart;
-    res.json(cart);
-});
+router.put('/cart/:id', addToCart);
 
 module.exports = router;
