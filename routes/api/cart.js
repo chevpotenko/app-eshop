@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { addToCart }  = require('../../services/cart');
+const { addToCart }  = require('../../middlewares/cart');
 
 router.get('/cart', (req, res) => {
     if (!req.session.cart) {

@@ -1,10 +1,9 @@
 const path = require('path');
 const router = require('express').Router();
-const csrf = require('../node_modules/csurf');
+const csrfProtection = require('../middlewares/csurf')
 
-router.use(csrf());
-
-router.get('*', function (req, res) {
+router.get('*', csrfProtection, function (req, res) {
+    res.cookie('XSRF-TOKEN', req.csrfToken());
     res.sendFile(path.resolve( __dirname, '../',  'public', 'index.html'));
 });
 

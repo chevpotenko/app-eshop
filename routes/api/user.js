@@ -1,47 +1,49 @@
 const router = require('express').Router();
-const Users = require('../../models/users');
-const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const randtoken = require('rand-token');
+const userSignUp = require('../../services/signup');
 
-router.get('/user/signup', (req, res, next) => {
-    Users.find({}, function(err, users) {
-        if (err) {
-            console.log('Users:' + err);
-        } else {
-            res.json(users);
-        }
-    });
+const refreshTokens = require('../../services/jwt-tokens');
+const secret = process.env.JWT_SECRETE;
+
+router.post('/user/signup', userSignUp);
+
+router.post('/user/signin', (req, res) => {
+    const { username, password } = req.body;
+    const user = {
+        'username': username,
+        'role': 'admin'
+    };
+    const token = jwt.sign(user, process.env.JWT_SECRETE, { expiresIn: 600 });
+    const refreshToken = randtoken.uid(256);
+
+    refreshTokens[refreshToken] = username;
+    res.json({ jwt: token, refreshToken: refreshToken });
 });
 
-router.post('/user/signup', (req, res, next) => {
-    passport.authenticate('local.signup', function(err, user, info) {
-        if (err) { return next(err) }
-        if (!user) {
-            res.status(401).send(info);
-        } else {
-            req.logIn(user, function(err) {
-                if (err) { return next(err); }
-                return res.json(req.body);
-            });
-        }
-    })(req, res, next);
+router.post('/user/signout', function (req, res) {
+    const refreshToken = req.body.refreshToken;
+
+    if (refreshToken in refreshTokens) {
+        delete refreshTokens[refreshToken];
+    }
+    res.sendStatus(204);
 });
 
-router.get('/user/signin', (req, res, next) => {
-    res.json({ signin: req.isAuthenticated() });
-});
+router.get('/refresh', function(req, res) {
+    const refreshToken = req.body.refreshToken;
 
-router.post('/user/signin', (req, res, next) => {
-    passport.authenticate('local.signin', function(err, user, info) {
-        if (err) { return next(err) }
-        if (!user) {
-            res.status(401).send(info);
-        } else {
-            req.logIn(user, function(err) {
-                if (err) { return next(err); }
-                return res.json(req.body);
-            });
-        }
-    })(req, res, next);
+    if (refreshToken in refreshTokens) {
+        const user = {
+            'username': refreshTokens[refreshToken],
+            'role': 'admin'
+        };
+        const token = jwt.sign(user, secret, { expiresIn: 600 });
+        res.json({ jwt: token })
+    }
+    else {
+        res.sendStatus(401);
+    }
 });
 
 module.exports = router;
